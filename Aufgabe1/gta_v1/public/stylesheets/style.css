@@ -58,6 +58,12 @@ a:hover {
   padding: 15px;
 }
 
+.row::after {
+  content: "";
+  clear: both;
+  display: table;
+}
+
 .taglist li {
   background: #2daaf3;
   color: white;
@@ -71,7 +77,8 @@ a:hover {
   margin: 0px;
 }
 
-label {
+label, legend {
+  font-weight: bold;
   display: block;
   margin-bottom: 5px;
 }
