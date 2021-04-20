@@ -80,3 +80,7 @@ label {
   margin-top: 10px;
 }
 
+#result-img {
+  max-width: 100%;
+  height: auto;
+}
