@@ -13,7 +13,7 @@
 	<body>
 
 		<header class="jumbotron">
-			<div class="container">
+			<div class="container-fluid">
 				<img src="./images/location.png" width="100"
 						alt="an image of a map and location">
 				<h1>GeoTagApp</h1>
@@ -24,13 +24,13 @@
 			</div>
 		</header>
 
-		<main class="container">
+		<main class="container-fluid">
 
-			<section class="tagging">
+			<section class="tagging col-md-3">
 				<h2>Tagging</h2>
 
 				<!-- ############### Aufgabe1a Form1 Start -->
-				<form id="tag-form" action="/tagging" method="post">
+				<form class="row" id="tag-form" action="/tagging" method="post">
 					<fieldset>
 						<legend>Enter new GeoTag</legend>
 
@@ -55,7 +55,7 @@
 
 			</section>
 
-			<section class="discovery">
+			<section class="discovery col-md-9">
 				<h2>Discovery</h2>
 
 				<!-- ############### Aufgabe1a Form2 Start -->
@@ -69,14 +69,14 @@
 				</form>
 				<!-- ############### Aufgabe1a Form2 Ende -->
 
-				<div class="taglist">
+				<div class="taglist col-sm-4 col-lg-6">
 					<ul id="results">
 						<li>Castle (49.01379, 8.404435) #sight</li>
 						<li>IWI (49.01379, 8.390071) #edu</li>
 					</ul>
 				</div>
 
-				<div class="tagmap">
+				<div class="tagmap col-sm-8 col-lg-6">
 					<img id="result-img" src="./images/mapview.jpg" alt="a map with locations"/>
 					<div class="caption">Result map</div>
 				</div>
