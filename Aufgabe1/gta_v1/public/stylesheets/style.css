@@ -1,3 +1,13 @@
+* {
+  box-sizing: border-box;
+}
+
+header, footer {
+  background: gray;
+  color: white;
+  padding: 15px;
+}
+
 body {
   padding: 50px;
   font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
@@ -6,3 +16,64 @@ body {
 a {
   color: #00B7FF;
 }
+
+a:hover {
+  color: #2e6da4;
+}
+
+.flex-container {
+  display: flex;
+}
+
+@media (max-width: 850px) {
+  .flex-container {
+    flex-flow: column;
+  }
+}
+
+@media (min-width: 850px) {
+  .flex-container {
+    flex-flow: row;
+  }
+}
+
+.tagging {
+  flex-basis: 25%;
+  padding: 15px;
+}
+
+.discovery {
+  flex-basis: 75%;
+  padding: 15px;
+}
+
+.taglist {
+  flex-basis: 33.33%;
+}
+
+.taglist li {
+  background: #2daaf3;
+  color: white;
+  padding: 5px;
+  margin-bottom: 10px;
+}
+
+.taglist ul {
+  list-style-type: none;
+  padding: 15px;
+  margin: 0px;
+}
+
+.tagmap {
+  flex-basis: 66.66%;
+}
+
+label {
+  display: block;
+  padding: 5px;
+}
+
+#tSubmit {
+  margin-top: 10px;
+}
+
