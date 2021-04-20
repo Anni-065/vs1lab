@@ -73,11 +73,12 @@ a:hover {
 
 label {
   display: block;
-  padding: 5px;
+  margin-bottom: 5px;
 }
 
-#tSubmit {
-  margin-top: 10px;
+input[type=text] {
+  height: 30px;
+  margin-bottom: 10px;
 }
 
 #result-img {
