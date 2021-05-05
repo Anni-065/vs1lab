@@ -120,13 +120,15 @@ var gtaLocator = (function GtaLocator(geoLocationApi) {
         readme: "Dieses Objekt enthält 'öffentliche' Teile des Moduls.",
 
         updateLocation: function() {
-            let taglist = $('#result-img').data("tags")
 
-            if ($('#dLatitude').val() !== "" && $('#dLongitude').val() !== "") {
-                document.getElementById('result-img').src = getLocationMapSrc(
-                    $('#dLatitude').val(),
-                    $('#dLongitude').val(),
-                    taglist, "13");
+            if (document.getElementById("dLatitude").value !== ""
+                && document.getElementById("dLongitude").value !== "") {
+                document.getElementById("result-img").src = getLocationMapSrc(
+                    document.getElementById("dLatitude").value,
+                    document.getElementById("dLongitude").value,
+                    JSON.parse(document.getElementById("result-img").dataset.tags),
+                    "13");
+                console.log(document.getElementById("dLatitude").value);
             } else {
                 tryLocate(
                     function (position) {
