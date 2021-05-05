@@ -82,7 +82,7 @@ var gtaLocator = (function GtaLocator(geoLocationApi) {
     };
 
     // Hier API Key eintragen
-    var apiKey = "QvvWYuqegzToA3GyE1dCuHu558eyFarh";
+    var apiKey = "YOUR_API_KEY_HERE";
 
     /**
      * Funktion erzeugt eine URL, die auf die Karte verweist.
@@ -120,26 +120,38 @@ var gtaLocator = (function GtaLocator(geoLocationApi) {
         readme: "Dieses Objekt enthält 'öffentliche' Teile des Moduls.",
 
         updateLocation: function() {
-            tryLocate(
-                function (position) {
-                    const lat = getLatitude(position);
-                    const lon = getLongitude(position);
+            let taglist = $('#result-img').data("tags")
 
-                    document.getElementById("tLatitude").value
-                        = document.getElementById("dLatitude").value
-                        = lat;
+            if ($('#dLatitude').val() !== "" && $('#dLongitude').val() !== "") {
+                document.getElementById('result-img').src = getLocationMapSrc(
+                    $('#dLatitude').val(),
+                    $('#dLongitude').val(),
+                    taglist, "13");
+            } else {
+                tryLocate(
+                    function (position) {
+                        const lat = getLatitude(position);
+                        const lon = getLongitude(position);
 
-                    document.getElementById("tLongitude").value
-                        = document.getElementById("dLongitude").value
-                        = lon;
+                        document.getElementById("tLatitude").value
+                            = document.getElementById("dLatitude").value
+                            = lat;
 
-                    document.getElementById("result-img").src = getLocationMapSrc(lat, lon, [], "13");
+                        document.getElementById("tLongitude").value
+                            = document.getElementById("dLongitude").value
+                            = lon;
 
-                },
-                function (msg) {
-                    alert(msg);
-                }
-            )
+                        document.getElementById("result-img").src = getLocationMapSrc(lat,
+                            lon,
+                            [],
+                            "13");
+
+                    },
+                    function (msg) {
+                        alert(msg);
+                    }
+                )
+            }
         }
     }; // ... Ende öffentlicher Teil
 })(GEOLOCATIONAPI);
