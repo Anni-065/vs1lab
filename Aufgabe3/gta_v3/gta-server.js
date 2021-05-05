@@ -29,14 +29,19 @@ app.set('view engine', 'ejs');
  * Teste das Ergebnis im Browser unter 'http://localhost:3000/'.
  */
 
-// TODO: CODE ERGÄNZEN
+app.use(express.static('public'));
 
 /**
  * Konstruktor für GeoTag Objekte.
  * GeoTag Objekte sollen min. alle Felder des 'tag-form' Formulars aufnehmen.
  */
 
-// TODO: CODE ERGÄNZEN
+function GeoTag(latitude, longitude, name, hashtag) {
+    this.latitude = latitude;
+    this.longitude = longitude;
+    this.name = name;
+    this.hashtag = hashtag;
+}
 
 /**
  * Modul für 'In-Memory'-Speicherung von GeoTags mit folgenden Komponenten:
@@ -47,7 +52,50 @@ app.set('view engine', 'ejs');
  * - Funktion zum Löschen eines Geo Tags.
  */
 
-// TODO: CODE ERGÄNZEN
+geoTagArray = [];
+
+function addTag(geoTag) {
+    geoTagArray.push(geoTag);
+}
+
+function removeTag(geoTag) {
+    let index = geoTagArray.indexOf(geoTag);
+    while (index > -1) {
+        geoTagArray.splice(index, 1);
+        index = geoTagArray.indexOf(geoTag);
+    }
+}
+
+function searchTag(search) {
+    return geoTagArray.filter(geoTag =>
+        (geoTag.name.toLowerCase().includes(search.toLowerCase())
+        || geoTag.hashtag.toLowerCase().includes(search.toLowerCase())));
+}
+
+function searchTagInDistance(lat, lon, r) {
+    return geoTagArray.filter(geoTag => distancePoints(geoTag.latitude, geoTag.longitude, lat, lon, r));
+}
+
+const EARTH_RADIUS = 6371000; // Average radius in meter
+
+// Equirectangular approximation for easier function, returns true if distance <= radius.
+function distancePoints(lat1, lon1, lat2, lon2, radius) {
+    const latRad1 = degToRad(lat1);
+    const latRad2 = degToRad(lat2);
+    const lonRad1 = degToRad(lon1);
+    const lonRad2 = degToRad(lon2);
+
+    const x = (lonRad2 - lonRad1) * Math.cos((latRad1 + latRad2) / 2);
+    const y = (latRad2 - latRad1);
+    const distance = Math.sqrt(x * x + y * y) * EARTH_RADIUS;
+
+    return distance <= radius;
+}
+
+function degToRad(value) {
+    return value * Math.PI/180;
+}
+
 
 /**
  * Route mit Pfad '/' für HTTP 'GET' Requests.
