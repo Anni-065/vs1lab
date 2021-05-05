@@ -108,7 +108,10 @@ function degToRad(value) {
 
 app.get('/', function(req, res) {
     res.render('gta', {
-        taglist: []
+        taglist: geoTagArray,
+        data: JSON.stringify(geoTagArray),
+        latitude: req.body.lat,
+        longitude: req.body.lon
     });
 });
 
@@ -125,7 +128,17 @@ app.get('/', function(req, res) {
  * Die Objekte liegen in einem Standard Radius um die Koordinate (lat, lon).
  */
 
-// TODO: CODE ERGÄNZEN START
+app.post('/tagging', function(req, res) {
+    let tag = new GeoTag(req.body.lat, req.body.lon, req.body.tName, req.body.tHashtag);
+    addTag(tag);
+    let currentTaglist = searchTagInDistance(tag.latitude, tag.longitude, 2000);
+    res.render('gta', {
+        taglist: currentTaglist,
+        data: JSON.stringify(geoTagArray),
+        latitude: req.body.lat,
+        longitude: req.body.lon
+    });
+});
 
 /**
  * Route mit Pfad '/discovery' für HTTP 'POST' Requests.
@@ -139,7 +152,20 @@ app.get('/', function(req, res) {
  * Falls 'term' vorhanden ist, wird nach Suchwort gefiltert.
  */
 
-// TODO: CODE ERGÄNZEN
+app.post('/discovery', function(req, res) {
+    let currentTaglist;
+    if (req.body.dSearch) {
+        currentTaglist = searchTag(req.body.dSearch);
+    } else {
+        currentTaglist = searchTagInDistance(req.body.lat, req.body.lon, 2000);
+    }
+    res.render('gta', {
+        taglist: currentTaglist,
+        data: JSON.stringify(geoTagArray),
+        latitude: req.body.lat,
+        longitude: req.body.lon
+    })
+});
 
 /**
  * Setze Port und speichere in Express.
