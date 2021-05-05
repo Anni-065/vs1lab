@@ -31,18 +31,20 @@
                 <legend>Enter new GeoTag</legend>
 
                 <label for="tLatitude">latitude</label>
-                <input type="text" id="tLatitude" name="tLatitude" placeholder="49.01379" required>
+                <input type="text" id="tLatitude" name="lat" placeholder="49.01379"
+                       pattern="[-+]?\d{1,2}(,\d+)?" required>
 
                 <label for="tLongitude">longitude</label>
-                <input type="text" id="tLongitude" name="tLongitude" placeholder="8.390071" required>
+                <input type="text" id="tLongitude" name="lon" placeholder="8.390071"
+                       pattern="[-+]?\d{1,3}(,\d+)?" required>
 
                 <label for="tName">name</label>
                 <input type="text" id="tName" name="tName" placeholder="some name" required maxlength="10"
-                       pattern="[a-zA-Z]+"/>
+                       pattern="\w+"/>
 
                 <label for="tHashtag">hashtag</label>
                 <input type="text" id="tHashtag" maxlength="11" name="tHashtag"
-                       placeholder="# + max. 10 letters" pattern="#[a-zA-Z]+"/>
+                       placeholder="# + max. 10 letters" pattern="#\w+"/>
 
                 <input id="tSubmit" type="submit" value="submit">
             </fieldset>
@@ -61,6 +63,8 @@
 
                 <input type="text" id="dSearch" name="dSearch" placeholder="search term">
                 <input type="submit" value="apply">
+                <input type="hidden" name="lat" id="dLatitude">
+                <input type="hidden" name="lon" id="dLongitude">
             </fieldset>
         </form>
         <!-- ############### Aufgabe1a Form2 Ende -->
