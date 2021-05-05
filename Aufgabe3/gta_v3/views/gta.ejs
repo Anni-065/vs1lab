@@ -31,10 +31,10 @@
 				<legend>Enter new GeoTag</legend>
 
 				<label for="tLatitude">latitude</label>
-				<input type="text" id="tLatitude" name="tLatitude" placeholder="49.01379" required>
+				<input type="text" id="tLatitude" name="lat" value="<%=latitude%>" required>
 
 				<label for="tLongitude">longitude</label>
-				<input type="text" id="tLongitude" name="tLongitude" placeholder="8.390071" required>
+				<input type="text" id="tLongitude" name="lon" value="<%=longitude%>" required>
 
 				<label for="tName">name</label>
 				<input type="text" id="tName" name="tName" placeholder="some name" required maxlength="10"
@@ -61,8 +61,8 @@
 
 				<input type="text" id="dSearch" name="dSearch" placeholder="search term">
 				<input type="submit" value="apply">
-				<input id="dLatitude" hidden>
-				<input id="dLongitude" hidden>
+				<input id="dLatitude" name="lat" value="<%=latitude%>" hidden>
+				<input id="dLongitude" name="lon" value="<%=longitude%>" hidden>
 			</fieldset>
 		</form>
 		<!-- ############### Aufgabe1a Form2 Ende -->
@@ -77,7 +77,7 @@
 			</div>
 
 			<div class="tagmap col-8">
-				<img id="result-img" src="./images/mapview.jpg" alt="a map with locations"/>
+				<img id="result-img" src="./images/mapview.jpg" alt="a map with locations" data-tags="<%=data%>"/>
 				<div class="caption">Result map</div>
 			</div>
 		</div>
