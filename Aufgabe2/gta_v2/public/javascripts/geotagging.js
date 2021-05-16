@@ -16,7 +16,7 @@ GEOLOCATIONAPI = {
     getCurrentPosition: function(onsuccess) {
         onsuccess({
             "coords": {
-                "latitude": 49.013790,
+                "latitude": 49.013790, 
                 "longitude": 8.390071,
                 "altitude": null,
                 "accuracy": 39,
@@ -107,20 +107,37 @@ var gtaLocator = (function GtaLocator(geoLocationApi) {
         });
 
         var urlString = "https://www.mapquestapi.com/staticmap/v4/getmap?key=" +
-            apiKey + "&size=600,400&zoom=" + zoom + "&center=" + lat + "," + lon + "&" + tagList;
+            apiKey + "YOUR_API_KEY_HERE" + zoom + "&center=" + lat + "," + lon + "&" + tagList;
 
         console.log("Generated Maps Url: " + urlString);
         return urlString;
     };
 
     return { // Start öffentlicher Teil des Moduls ...
-
         // Public Member
-
         readme: "Dieses Objekt enthält 'öffentliche' Teile des Moduls.",
 
         updateLocation: function() {
             // TODO Hier Inhalt der Funktion "update" ergänzen
+            tryLocate(
+                function(position) {
+                    const LATITUDE = getLatitude(position);
+                    const LONGITUDE = getLongitude(position);
+
+                    document.getElementById("tLatitude").value
+                        = document.getElementById("dLatitude").value
+                        = LATITUDE;
+
+                    document.getElementById("tLongitude").value
+                        = document.getElementById("dLongitude").value
+                        = LONGITUDE;
+
+                    document.getElementById("result-img").src = getLocationMapSrc(LATITUDE, LONGITUDE, [], "13");
+                },
+                function (msg) {
+                    alert(msg);
+                }
+            )
         }
 
     }; // ... Ende öffentlicher Teil
@@ -132,6 +149,7 @@ var gtaLocator = (function GtaLocator(geoLocationApi) {
  * des Skripts.
  */
 $(function() {
-    alert("Please change the script 'geotagging.js'");
+    //alert("Please change the script 'geotagging.js'");
     // TODO Hier den Aufruf für updateLocation einfügen
+    gtaLocator.updateLocation();
 });
