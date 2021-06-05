@@ -121,14 +121,13 @@ var gtaLocator = (function GtaLocator(geoLocationApi) {
 
         updateLocation: function() {
 
-            if (document.getElementById("dLatitude").value !== ""
-                && document.getElementById("dLongitude").value !== "") {
-                document.getElementById("result-img").src = getLocationMapSrc(
-                    document.getElementById("dLatitude").value,
-                    document.getElementById("dLongitude").value,
-                    JSON.parse(document.getElementById("result-img").dataset.tags),
-                    "13");
-                console.log(document.getElementById("dLatitude").value);
+            if ($("#dLatitude").val() !== ""
+                && $("#dLongitude").val() !== "") {
+                $("#result-img").attr('src', getLocationMapSrc(
+                    $("#dLatitude").val(),
+                    $("#dLongitude").val(),
+                    $("#result-img").data("tags"),
+                    "13"));
             } else {
                 tryLocate(
                     function (position) {
