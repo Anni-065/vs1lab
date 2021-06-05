@@ -132,19 +132,19 @@ var gtaLocator = (function GtaLocator(geoLocationApi) {
             } else {
                 tryLocate(
                     function (position) {
-                        const lat = getLatitude(position);
-                        const lon = getLongitude(position);
+                        const latitude = getLatitude(position);
+                        const longitude = getLongitude(position);
 
-                        document.getElementById("tLatitude").value
-                            = document.getElementById("dLatitude").value
-                            = lat;
 
-                        document.getElementById("tLongitude").value
-                            = document.getElementById("dLongitude").value
-                            = lon;
+                        console.log("LAT: " + latitude);
+                        console.log("LONG: " + longitude);
+                        document.getElementById("tLatitude").setAttribute('value', latitude);
+                        document.getElementById("tLongitude").setAttribute('value', longitude);
+                        document.getElementById("dLatitude").setAttribute('value', latitude);
+                        document.getElementById("dLongitude").setAttribute('value', longitude);
 
-                        document.getElementById("result-img").src = getLocationMapSrc(lat,
-                            lon,
+                        document.getElementById("result-img").src = getLocationMapSrc(latitude,
+                            longitude,
                             [],
                             "13");
 
