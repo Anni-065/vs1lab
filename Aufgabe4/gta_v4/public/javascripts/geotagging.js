@@ -82,7 +82,7 @@ var gtaLocator = (function GtaLocator(geoLocationApi) {
     };
 
     // Hier API Key eintragen
-    var apiKey = "QvvWYuqegzToA3GyE1dCuHu558eyFarh";
+    var apiKey = "YOUR_API_KEY_HERE";
 
     /**
      * Funktion erzeugt eine URL, die auf die Karte verweist.
@@ -121,30 +121,29 @@ var gtaLocator = (function GtaLocator(geoLocationApi) {
 
         updateLocation: function() {
 
-            if (document.getElementById("dLatitude").value !== ""
-                && document.getElementById("dLongitude").value !== "") {
-                document.getElementById("result-img").src = getLocationMapSrc(
-                    document.getElementById("dLatitude").value,
-                    document.getElementById("dLongitude").value,
-                    JSON.parse(document.getElementById("result-img").dataset.tags),
-                    "13");
-                console.log(document.getElementById("dLatitude").value);
+            if ($("#dLatitude").val() !== ""
+                && $("#dLongitude").val() !== "") {
+                $("#result-img").attr('src', getLocationMapSrc(
+                    $("#dLatitude").val(),
+                    $("#dLongitude").val(),
+                    $("#result-img").data("tags"),
+                    "13"));
             } else {
                 tryLocate(
                     function (position) {
-                        const lat = getLatitude(position);
-                        const lon = getLongitude(position);
+                        const latitude = getLatitude(position);
+                        const longitude = getLongitude(position);
 
-                        document.getElementById("tLatitude").value
-                            = document.getElementById("dLatitude").value
-                            = lat;
 
-                        document.getElementById("tLongitude").value
-                            = document.getElementById("dLongitude").value
-                            = lon;
+                        console.log("LAT: " + latitude);
+                        console.log("LONG: " + longitude);
+                        document.getElementById("tLatitude").setAttribute('value', latitude);
+                        document.getElementById("tLongitude").setAttribute('value', longitude);
+                        document.getElementById("dLatitude").setAttribute('value', latitude);
+                        document.getElementById("dLongitude").setAttribute('value', longitude);
 
-                        document.getElementById("result-img").src = getLocationMapSrc(lat,
-                            lon,
+                        document.getElementById("result-img").src = getLocationMapSrc(latitude,
+                            longitude,
                             [],
                             "13");
 
