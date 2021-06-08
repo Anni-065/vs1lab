@@ -52,49 +52,59 @@ function GeoTag(latitude, longitude, name, hashtag) {
  * - Funktion zum Löschen eines Geo Tags.
  */
 
-geoTagArray = [];
+var geoTag = (function () {
+    geoTagArray = [];
 
-function addTag(geoTag) {
-    geoTagArray.push(geoTag);
-}
-
-function removeTag(geoTag) {
-    let index = geoTagArray.indexOf(geoTag);
-    while (index > -1) {
-        geoTagArray.splice(index, 1);
-        index = geoTagArray.indexOf(geoTag);
+    var addTag = function(geoTag) {
+        geoTagArray.push(geoTag);
     }
-}
 
-function searchTag(search) {
-    return geoTagArray.filter(geoTag =>
-        (geoTag.name.toLowerCase().includes(search.toLowerCase())
-        || geoTag.hashtag.toLowerCase().includes(search.toLowerCase())));
-}
+    var removeTag = function(geoTag) {
+        let index = geoTagArray.indexOf(geoTag);
+        while (index > -1) {
+            geoTagArray.splice(index, 1);
+            index = geoTagArray.indexOf(geoTag);
+        }
+    }
 
-function searchTagInDistance(lat, lon, r) {
-    return geoTagArray.filter(geoTag => distancePoints(geoTag.latitude, geoTag.longitude, lat, lon, r));
-}
+    var searchTag = function(search) {
+        return geoTagArray.filter(geoTag =>
+            (geoTag.name.toLowerCase().includes(search.toLowerCase())
+                || geoTag.hashtag.toLowerCase().includes(search.toLowerCase())));
+    }
 
-const EARTH_RADIUS = 6371000; // Average radius in meter
+    var searchTagInDistance = function(lat, lon, r) {
+        return geoTagArray.filter(geoTag => distancePoints(geoTag.latitude, geoTag.longitude, lat, lon, r));
+    }
 
-// Equirectangular approximation for easier function, returns true if distance <= radius.
-function distancePoints(lat1, lon1, lat2, lon2, radius) {
-    const latRad1 = degToRad(lat1);
-    const latRad2 = degToRad(lat2);
-    const lonRad1 = degToRad(lon1);
-    const lonRad2 = degToRad(lon2);
+    const EARTH_RADIUS = 6371000; // Average radius in meter
 
-    const x = (lonRad2 - lonRad1) * Math.cos((latRad1 + latRad2) / 2);
-    const y = (latRad2 - latRad1);
-    const distance = Math.sqrt(x * x + y * y) * EARTH_RADIUS;
+    // Equirectangular approximation for easier function, returns true if distance <= radius.
+    var distancePoints = function(lat1, lon1, lat2, lon2, radius) {
+        const latRad1 = degToRad(lat1);
+        const latRad2 = degToRad(lat2);
+        const lonRad1 = degToRad(lon1);
+        const lonRad2 = degToRad(lon2);
 
-    return distance <= radius;
-}
+        const x = (lonRad2 - lonRad1) * Math.cos((latRad1 + latRad2) / 2);
+        const y = (latRad2 - latRad1);
+        const distance = Math.sqrt(x * x + y * y) * EARTH_RADIUS;
 
-function degToRad(value) {
-    return value * Math.PI/180;
-}
+        return distance <= radius;
+    }
+
+    var degToRad = function(value) {
+        return value * Math.PI/180;
+    }
+
+    return {
+        addTag: addTag,
+        removeTag: removeTag,
+        searchTag: searchTag,
+        searchTagInDistance: searchTagInDistance
+    }
+})();
+
 
 
 /**
@@ -130,8 +140,8 @@ app.get('/', function(req, res) {
 
 app.post('/tagging', function(req, res) {
     let tag = new GeoTag(req.body.lat, req.body.lon, req.body.tName, req.body.tHashtag);
-    addTag(tag);
-    let currentTaglist = searchTagInDistance(tag.latitude, tag.longitude, 2000);
+    geoTag.addTag(tag);
+    let currentTaglist = geoTag.searchTagInDistance(tag.latitude, tag.longitude, 2000);
     res.render('gta', {
         taglist: currentTaglist,
         data: JSON.stringify(geoTagArray),
@@ -155,9 +165,9 @@ app.post('/tagging', function(req, res) {
 app.post('/discovery', function(req, res) {
     let currentTaglist;
     if (req.body.dSearch) {
-        currentTaglist = searchTag(req.body.dSearch);
+        currentTaglist = geoTag.searchTag(req.body.dSearch);
     } else {
-        currentTaglist = searchTagInDistance(req.body.lat, req.body.lon, 2000);
+        currentTaglist = geoTag.searchTagInDistance(req.body.lat, req.body.lon, 2000);
     }
     res.render('gta', {
         taglist: currentTaglist,
