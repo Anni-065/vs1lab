@@ -16,8 +16,8 @@ GEOLOCATIONAPI = {
     getCurrentPosition: function(onsuccess) {
         onsuccess({
             "coords": {
-                "latitude": 49.013790,
-                "longitude": 8.390071,
+                "latitude": 53.83808850792929,
+                "longitude": -9.351957062533689,
                 "altitude": null,
                 "accuracy": 39,
                 "altitudeAccuracy": null,
