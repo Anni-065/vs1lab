@@ -133,7 +133,9 @@ var gtaLocator = (function GtaLocator(geoLocationApi) {
 
                 var img_src = getLocationMapSrc(latitude, longtitude);
                 document.getElementById("result-img").setAttribute('src', img_src);
-                }, alert)
+                }, function(msg) {
+                    alert(msg);
+                })
 
         }
 
