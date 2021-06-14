@@ -29,14 +29,19 @@ app.set('view engine', 'ejs');
  * Teste das Ergebnis im Browser unter 'http://localhost:3000/'.
  */
 
-// TODO: CODE ERGÄNZEN
+app.use(express.static('public'));
 
 /**
  * Konstruktor für GeoTag Objekte.
  * GeoTag Objekte sollen min. alle Felder des 'tag-form' Formulars aufnehmen.
  */
 
-// TODO: CODE ERGÄNZEN
+function GeoTag(latitude, longitude, name, hashtag) {
+    this.latitude = latitude;
+    this.longitude = longitude;
+    this.name = name;
+    this.hashtag = hashtag;
+}
 
 /**
  * Modul für 'In-Memory'-Speicherung von GeoTags mit folgenden Komponenten:
@@ -47,7 +52,60 @@ app.set('view engine', 'ejs');
  * - Funktion zum Löschen eines Geo Tags.
  */
 
-// TODO: CODE ERGÄNZEN
+var geoTag = (function () {
+    geoTagArray = [];
+
+    var addTag = function(geoTag) {
+        geoTagArray.push(geoTag);
+    }
+
+    var removeTag = function(geoTag) {
+        let index = geoTagArray.indexOf(geoTag);
+        while (index > -1) {
+            geoTagArray.splice(index, 1);
+            index = geoTagArray.indexOf(geoTag);
+        }
+    }
+
+    var searchTag = function(search) {
+        return geoTagArray.filter(geoTag =>
+            (geoTag.name.toLowerCase().includes(search.toLowerCase())
+                || geoTag.hashtag.toLowerCase().includes(search.toLowerCase())));
+    }
+
+    var searchTagInDistance = function(lat, lon, r) {
+        return geoTagArray.filter(geoTag => distancePoints(geoTag.latitude, geoTag.longitude, lat, lon, r));
+    }
+
+    const EARTH_RADIUS = 6371000; // Average radius in meter
+
+    // Equirectangular approximation for easier function, returns true if distance <= radius.
+    var distancePoints = function(lat1, lon1, lat2, lon2, radius) {
+        const latRad1 = degToRad(lat1);
+        const latRad2 = degToRad(lat2);
+        const lonRad1 = degToRad(lon1);
+        const lonRad2 = degToRad(lon2);
+
+        const x = (lonRad2 - lonRad1) * Math.cos((latRad1 + latRad2) / 2);
+        const y = (latRad2 - latRad1);
+        const distance = Math.sqrt(x * x + y * y) * EARTH_RADIUS;
+
+        return distance <= radius;
+    }
+
+    var degToRad = function(value) {
+        return value * Math.PI/180;
+    }
+
+    return {
+        addTag: addTag,
+        removeTag: removeTag,
+        searchTag: searchTag,
+        searchTagInDistance: searchTagInDistance
+    }
+})();
+
+
 
 /**
  * Route mit Pfad '/' für HTTP 'GET' Requests.
@@ -60,7 +118,10 @@ app.set('view engine', 'ejs');
 
 app.get('/', function(req, res) {
     res.render('gta', {
-        taglist: []
+        taglist: geoTagArray,
+        data: JSON.stringify(geoTagArray),
+        latitude: req.body.lat,
+        longitude: req.body.lon
     });
 });
 
@@ -77,7 +138,17 @@ app.get('/', function(req, res) {
  * Die Objekte liegen in einem Standard Radius um die Koordinate (lat, lon).
  */
 
-// TODO: CODE ERGÄNZEN START
+app.post('/tagging', function(req, res) {
+    let tag = new GeoTag(req.body.lat, req.body.lon, req.body.tName, req.body.tHashtag);
+    geoTag.addTag(tag);
+    let currentTaglist = geoTag.searchTagInDistance(tag.latitude, tag.longitude, 2000); // search radius = 2000m
+    res.render('gta', {
+        taglist: currentTaglist,
+        data: JSON.stringify(geoTagArray),
+        latitude: req.body.lat,
+        longitude: req.body.lon
+    });
+});
 
 /**
  * Route mit Pfad '/discovery' für HTTP 'POST' Requests.
@@ -91,7 +162,20 @@ app.get('/', function(req, res) {
  * Falls 'term' vorhanden ist, wird nach Suchwort gefiltert.
  */
 
-// TODO: CODE ERGÄNZEN
+app.post('/discovery', function(req, res) {
+    let currentTaglist;
+    if (req.body.dSearch) {
+        currentTaglist = geoTag.searchTag(req.body.dSearch);
+    } else {
+        currentTaglist = geoTag.searchTagInDistance(req.body.lat, req.body.lon, 2000); // search radius = 2000m
+    }
+    res.render('gta', {
+        taglist: currentTaglist,
+        data: JSON.stringify(geoTagArray),
+        latitude: req.body.lat,
+        longitude: req.body.lon
+    })
+});
 
 /**
  * Setze Port und speichere in Express.
