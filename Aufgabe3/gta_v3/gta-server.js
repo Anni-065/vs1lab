@@ -29,15 +29,23 @@ app.set('view engine', 'ejs');
  * Teste das Ergebnis im Browser unter 'http://localhost:3000/'.
  */
 
-// TODO: CODE ERGÄNZEN
+app.use(express.static('public')); //Serves resources from public folder
+
 
 /**
  * Konstruktor für GeoTag Objekte.
  * GeoTag Objekte sollen min. alle Felder des 'tag-form' Formulars aufnehmen.
+ * (name, latitude, longitude, hashtag)
  */
 
-// TODO: CODE ERGÄNZEN
 
+function GeoTag(name, latitude, longitude, hashtag) {
+    this.name = name;
+    this.latitude = latitude;
+    this.longitude = longitude;
+    this.hashtag = hashtag;
+    return this;
+}
 /**
  * Modul für 'In-Memory'-Speicherung von GeoTags mit folgenden Komponenten:
  * - Array als Speicher für Geo Tags.
@@ -47,7 +55,37 @@ app.set('view engine', 'ejs');
  * - Funktion zum Löschen eines Geo Tags.
  */
 
-// TODO: CODE ERGÄNZEN
+var taglist = [];
+// TODO: Search by radius
+function searchRadius(latitude, longitude, radius) {
+    return taglist[0];
+}
+
+function search(str) {
+    let results = []
+    let substr = str.toLowerCase();
+    taglist.forEach(tag => {
+        let name_lower = tag.name.toLowerCase();
+        let hash_lower = tag.hashtag.toLowerCase();
+        if (name_lower.search(str) != -1 || hash_lower.search(str) != -1) {
+            results.push(tag);
+        }
+    })
+    return results;
+}
+
+function addGeoTag(name, latitude, longitude, hashtag) {
+    taglist.push(new GeoTag(name, latitude, longitude, hashtag));
+}
+
+function removeGeoTag(geotag) {
+    let i = 0;
+    while (i < taglist.length) {
+        let tagpos = taglist.indexOf(geotag);
+        taglist.splice(tagpos, 1);
+        i = tagpos;        
+    }
+}
 
 /**
  * Route mit Pfad '/' für HTTP 'GET' Requests.
@@ -77,7 +115,19 @@ app.get('/', function(req, res) {
  * Die Objekte liegen in einem Standard Radius um die Koordinate (lat, lon).
  */
 
-// TODO: CODE ERGÄNZEN START
+app.post('/tagging', function ( req, res ) {
+    addGeoTag(
+        req.body.tName,
+        req.body.tLatitude,
+        req.body.tLongitude,
+        req.body.tHashtag
+    )
+    res.render('gta', {
+        latitude: req.body.tLatitude,
+        longitude: req.body.tLongitude,
+        taglist: taglist
+    });
+});
 
 /**
  * Route mit Pfad '/discovery' für HTTP 'POST' Requests.
@@ -91,8 +141,18 @@ app.get('/', function(req, res) {
  * Falls 'term' vorhanden ist, wird nach Suchwort gefiltert.
  */
 
-// TODO: CODE ERGÄNZEN
-
+// TODO: POST Route '/discovery'
+app.post('/discovery', function ( req, res ) {
+    let results = search(req.body.dSearch);
+    results.forEach(element => {
+        console.log(element);
+    });
+    res.render('gta', {
+        // latitude: "",
+        // longitude: "",
+        taglist: results
+    })
+});
 /**
  * Setze Port und speichere in Express.
  */

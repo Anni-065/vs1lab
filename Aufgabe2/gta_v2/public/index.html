@@ -60,7 +60,7 @@
                 <legend>Filter by SearchTerm</legend>
 
                 <!-- hidden inputs -->
-                <input type="hidden" id="dLongtitude" name="dLongtitude">
+                <input type="hidden" id="dLongitude" name="dLongitude">
                 <input type="hidden" id="dLatitude" name="dLatitude">
 
                 <input type="text" id="dSearch" name="dSearch" placeholder="search term">
@@ -78,7 +78,7 @@
             </div>
 
             <div class="tagmap col-8">
-                <img id="result-img" src="./images/mapview.jpg" alt="a map with locations"/>
+                <img id="result-img" src="./images/mapview.jpg" alt="a map with locations" data-tags="<%=json.stringify(taglist) %>"/>
                 <div class="caption">Result map</div>
             </div>
         </div>
