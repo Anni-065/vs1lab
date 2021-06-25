@@ -10,6 +10,94 @@ console.log("The script is going to start...");
 
 // Es folgen einige Deklarationen, die aber noch nicht ausgeführt werden ...
 
+function GeoTag(latitude, longitude, name, hashtag) {
+    this.latitude = latitude;
+    this.longitude = longitude;
+    this.name = name;
+    this.hashtag = hashtag;
+}
+
+document.getElementById("tag-form").addEventListener("submit", function () {
+    event.preventDefault();
+    let newTag = JSON.stringify(new GeoTag($("#tLatitude").val()
+        , $("#tLongitude").val()
+        , $("#tName").val()
+        , $("#tHashtag").val()));
+
+    let xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function () {
+        if (xhttp.readyState === XMLHttpRequest.DONE) {
+            if (xhttp.status === 201) {
+                writeTagsToDiscovery(xhttp.response);
+            } else {
+                console.log("Could not create new tag: " + xhttp.status);
+            }
+
+        }
+    };
+
+    xhttp.open("POST", "/geotags");
+    xhttp.setRequestHeader("Content-Type", "application/json");
+    xhttp.send(newTag);
+});
+
+document.getElementById("filter-form").addEventListener("submit", function () {
+    event.preventDefault();
+    let lat = document.getElementById("dLatitude").value;
+    let long = document.getElementById("dLongitude").value;
+    let search = document.getElementById("dSearch").value;
+
+    const urlSearchParams = new URLSearchParams();
+    if (search !== "") {
+        urlSearchParams.set("search", search);
+    } else {
+        urlSearchParams.set("latitude", lat);
+        urlSearchParams.set("longitude", long);
+    }
+
+    let xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function () {
+        if (xhttp.readyState === 4) {
+            if (xhttp.status === 200) {
+                writeTagsToDiscovery(xhttp.response);
+            } else {
+                console.log("Could not find tags: " + xhttp.status);
+            }
+
+        }
+    };
+
+
+    xhttp.open("GET", "/geotags?" + urlSearchParams.toString());
+    xhttp.setRequestHeader("Content-Type", "application/json");
+    xhttp.send();
+});
+
+function writeTagsToDiscovery(response) {
+    let taglist = JSON.parse(response);
+
+    let ul = document.getElementById("results");
+    ul.innerHTML = "";
+    taglist.forEach(tag => {
+        let li = document.createElement("li");
+        li.appendChild(document.createTextNode(tag.name
+            + " ("
+            + tag.latitude
+            + ", "
+            + tag.longitude
+            + ") "
+            + tag.hashtag));
+        ul.appendChild(li);
+    });
+
+    if (taglist.length > 0) {
+        document.getElementById("dLatitude").value = taglist[0].latitude;
+        document.getElementById("dLongitude").value = taglist[0].longitude;
+    }
+
+    gtaLocator.updateLocation(taglist);
+}
+
 // Hier wird die verwendete API für Geolocations gewählt
 // Die folgende Deklaration ist ein 'Mockup', das immer funktioniert und eine fixe Position liefert.
 GEOLOCATIONAPI = {
@@ -119,14 +207,17 @@ var gtaLocator = (function GtaLocator(geoLocationApi) {
 
         readme: "Dieses Objekt enthält 'öffentliche' Teile des Moduls.",
 
-        updateLocation: function() {
+        updateLocation: function(taglist) {
+            if (!taglist) {
+                taglist = $("#result-img").data("tags");
+            }
 
             if ($("#dLatitude").val() !== ""
                 && $("#dLongitude").val() !== "") {
                 $("#result-img").attr('src', getLocationMapSrc(
                     $("#dLatitude").val(),
                     $("#dLongitude").val(),
-                    $("#result-img").data("tags"),
+                    taglist,
                     "13"));
             } else {
                 tryLocate(
@@ -144,7 +235,7 @@ var gtaLocator = (function GtaLocator(geoLocationApi) {
 
                         document.getElementById("result-img").src = getLocationMapSrc(latitude,
                             longitude,
-                            [],
+                            taglist,
                             "13");
 
                     },
