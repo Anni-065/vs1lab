@@ -1,0 +1,71 @@
+GET /geotags
+HOST: localhost:3000
+Accept: application/json
+
+###
+
+POST /geotags
+HOST: localhost:3000
+Content-Type: application/json
+
+{}
+
+###
+
+POST /geotags
+HOST: localhost:3000
+Content-Type: application/json
+
+{
+  "name": "a",
+  "latitude": "48.918",
+  "longitude": "8.733",
+  "hashtag": "#a"
+}
+
+###
+
+PUT /geotags/0
+HOST: localhost:3000
+Content-Type: application/json
+
+{
+  "name": "H-Ka",
+  "latitude": "49.01583884892137",
+  "longitude": "8.390362188861076",
+  "hashtag": "#wasIstDas"
+}
+
+###
+
+GET /geotags
+HOST: localhost:3000
+Accept: application/json
+Content-Type: application/json
+
+{
+  "name": "-K"
+}
+
+###
+
+GET /geotags
+HOST: localhost:3000
+Accept: application/json
+Content-Type: application/json
+
+{
+  "latitude": "49.0158",
+  "longitude": "8.3903"
+}
+
+###
+
+DELETE /geotags/0
+HOST: localhost:3000
+
+###
+
+GET /geotags
+HOST: localhost:3000
+Accept: application/json
