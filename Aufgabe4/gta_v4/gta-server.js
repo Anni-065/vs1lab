@@ -20,6 +20,7 @@ app.use(logger('dev'));
 app.use(bodyParser.urlencoded({
     extended: false
 }));
+app.use(bodyParser.json());
 
 // Setze ejs als View Engine
 app.set('view engine', 'ejs');
@@ -36,11 +37,12 @@ app.use(express.static('public'));
  * GeoTag Objekte sollen min. alle Felder des 'tag-form' Formulars aufnehmen.
  */
 
-function GeoTag(latitude, longitude, name, hashtag) {
+function GeoTag(latitude, longitude, name, hashtag, id) {
     this.latitude = latitude;
     this.longitude = longitude;
     this.name = name;
     this.hashtag = hashtag;
+    this.id = id;
 }
 
 /**
@@ -52,50 +54,75 @@ function GeoTag(latitude, longitude, name, hashtag) {
  * - Funktion zum Löschen eines Geo Tags.
  */
 
-geoTagArray = [];
+var geoTag = (function () {
+    geoTagArray = [];
 
-function addTag(geoTag) {
-    geoTagArray.push(geoTag);
-}
-
-function removeTag(geoTag) {
-    let index = geoTagArray.indexOf(geoTag);
-    while (index > -1) {
-        geoTagArray.splice(index, 1);
-        index = geoTagArray.indexOf(geoTag);
+    var addTag = function(geoTag) {
+        geoTagArray.push(geoTag);
+        geoTag.id = geoTagArray.indexOf(geoTag);
     }
-}
 
-function searchTag(search) {
-    return geoTagArray.filter(geoTag =>
-        (geoTag.name.toLowerCase().includes(search.toLowerCase())
-        || geoTag.hashtag.toLowerCase().includes(search.toLowerCase())));
-}
+    var removeTag = function(geoTag) {
+        let index = geoTagArray.indexOf(geoTag);
+        while (index > -1) {
+            geoTagArray.splice(index, 1);
+            index = geoTagArray.indexOf(geoTag);
+        }
+        setIDs();
+    }
 
-function searchTagInDistance(lat, lon, r) {
-    return geoTagArray.filter(geoTag => distancePoints(geoTag.latitude, geoTag.longitude, lat, lon, r));
-}
+    var removeTagByID = function(tagID) {
+        geoTagArray.splice(tagID, 1);
+        setIDs();
+    }
 
-const EARTH_RADIUS = 6371000; // Average radius in meter
+    var setIDs = function() {
+        geoTagArray.forEach(geoTag => {
+            geoTag.id = geoTagArray.indexOf(geoTag);
+        });
+    }
 
-// Equirectangular approximation for easier function, returns true if distance <= radius.
-function distancePoints(lat1, lon1, lat2, lon2, radius) {
-    const latRad1 = degToRad(lat1);
-    const latRad2 = degToRad(lat2);
-    const lonRad1 = degToRad(lon1);
-    const lonRad2 = degToRad(lon2);
+    var searchTag = function(search) {
+        return geoTagArray.filter(geoTag =>
+            (geoTag.name.toLowerCase().includes(search.toLowerCase())
+                || geoTag.hashtag.toLowerCase().includes(search.toLowerCase())));
+    }
 
-    const x = (lonRad2 - lonRad1) * Math.cos((latRad1 + latRad2) / 2);
-    const y = (latRad2 - latRad1);
-    const distance = Math.sqrt(x * x + y * y) * EARTH_RADIUS;
+    var searchTagInDistance = function(lat, lon, r) {
+        return geoTagArray.filter(geoTag => distancePoints(geoTag.latitude, geoTag.longitude, lat, lon, r));
+    }
 
-    return distance <= radius;
-}
+    const EARTH_RADIUS = 6371000; // Average radius in meter
 
-function degToRad(value) {
-    return value * Math.PI/180;
-}
+    // Equirectangular approximation for easier function, returns true if distance <= radius.
+    var distancePoints = function(lat1, lon1, lat2, lon2, radius) {
+        const latRad1 = degToRad(lat1);
+        const latRad2 = degToRad(lat2);
+        const lonRad1 = degToRad(lon1);
+        const lonRad2 = degToRad(lon2);
 
+        const x = (lonRad2 - lonRad1) * Math.cos((latRad1 + latRad2) / 2);
+        const y = (latRad2 - latRad1);
+        const distance = Math.sqrt(x * x + y * y) * EARTH_RADIUS;
+
+        return distance <= radius;
+    }
+
+    var degToRad = function(value) {
+        return value * Math.PI/180;
+    }
+
+    return {
+        geoTagArray: geoTagArray,
+        addTag: addTag,
+        removeTag: removeTag,
+        removeTagByID: removeTagByID,
+        searchTag: searchTag,
+        searchTagInDistance: searchTagInDistance
+    }
+})();
+
+var searchRadius = 5000; // 5 kilometers
 
 /**
  * Route mit Pfad '/' für HTTP 'GET' Requests.
