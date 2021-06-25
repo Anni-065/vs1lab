@@ -227,12 +227,18 @@ app.get('/geotags/:id', function (req, res) {
 
 app.put('/geotags/:id', function (req, res) {
     if (typeof geoTag.geoTagArray[parseInt(req.params.id)] !== undefined) {
-        let currentTag = geoTag.geoTagArray[parseInt(req.params.id)];
-        currentTag.latitude = req.params.latitude;
-        currentTag.longitude = req.params.longitude;
-        currentTag.name = req.params.name;
-        currentTag.hashtag = req.params.hashtag;
-        res.status(200).json(currentTag);
+        if (req.body.name !== undefined
+        || req.body.latitude !== undefined
+        || req.body.longitude !== undefined) {
+            let currentTag = geoTag.geoTagArray[parseInt(req.params.id)];
+            currentTag.latitude = req.body.latitude;
+            currentTag.longitude = req.body.longitude;
+            currentTag.name = req.body.name;
+            currentTag.hashtag = req.body.hashtag;
+            res.status(200).json(currentTag);
+        } else {
+            res.status(400).send("Tag isn't defined properly");
+        }
     } else {
         res.status(404).send("Tag doesn't exist");
     }
