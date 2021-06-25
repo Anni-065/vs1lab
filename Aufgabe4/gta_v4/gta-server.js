@@ -135,8 +135,8 @@ var searchRadius = 5000; // 5 kilometers
 
 app.get('/', function(req, res) {
     res.render('gta', {
-        taglist: geoTagArray,
-        data: JSON.stringify(geoTagArray),
+        taglist: geoTag.geoTagArray,
+        data: JSON.stringify(geoTag.geoTagArray),
         latitude: req.body.lat,
         longitude: req.body.lon
     });
@@ -157,11 +157,11 @@ app.get('/', function(req, res) {
 
 app.post('/tagging', function(req, res) {
     let tag = new GeoTag(req.body.lat, req.body.lon, req.body.tName, req.body.tHashtag);
-    addTag(tag);
-    let currentTaglist = searchTagInDistance(tag.latitude, tag.longitude, 2000);
+    geoTag.addTag(tag);
+    let currentTaglist = geoTag.searchTagInDistance(tag.latitude, tag.longitude, searchRadius); // search radius = 2000m
     res.render('gta', {
         taglist: currentTaglist,
-        data: JSON.stringify(geoTagArray),
+        data: JSON.stringify(geoTag.geoTagArray),
         latitude: req.body.lat,
         longitude: req.body.lon
     });
@@ -182,13 +182,13 @@ app.post('/tagging', function(req, res) {
 app.post('/discovery', function(req, res) {
     let currentTaglist;
     if (req.body.dSearch) {
-        currentTaglist = searchTag(req.body.dSearch);
+        currentTaglist = geoTag.searchTag(req.body.dSearch);
     } else {
-        currentTaglist = searchTagInDistance(req.body.lat, req.body.lon, 2000);
+        currentTaglist = geoTag.searchTagInDistance(req.body.lat, req.body.lon, searchRadius); // search radius = 2000m
     }
     res.render('gta', {
         taglist: currentTaglist,
-        data: JSON.stringify(geoTagArray),
+        data: JSON.stringify(geoTag.geoTagArray),
         latitude: req.body.lat,
         longitude: req.body.lon
     })
