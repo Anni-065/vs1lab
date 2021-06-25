@@ -194,6 +194,55 @@ app.post('/discovery', function(req, res) {
     })
 });
 
+app.get('/geotags', function (req, res) {
+    if (req.query.search !== undefined) {
+        res.json(geoTag.searchTag(req.query.search));
+    } else if (req.query.latitude !== undefined && req.query.longitude !== undefined) {
+        res.json(geoTag.searchTagInDistance(req.query.latitude, req.query.longitude, searchRadius));
+    } else {
+        res.json(geoTag.geoTagArray);
+    }
+});
+
+app.post('/geotags', function (req, res) {
+    if (req.body.name === undefined
+        || req.body.latitude === undefined
+        || req.body.longitude === undefined) {
+        res.status(400).send("Tag isn't defined properly");
+    } else {
+        let newTag = new GeoTag(req.body.latitude, req.body.longitude, req.body.name, req.body.hashtag);
+        geoTag.addTag(newTag);
+        res.status(201).setHeader("Location", "/geotags/" + newTag.id);
+        res.json(geoTag.searchTagInDistance(newTag.latitude, newTag.longitude, searchRadius));
+    }
+});
+
+app.get('/geotags/:id', function (req, res) {
+    if (typeof geoTag.geoTagArray[parseInt(req.params.id)]) {
+        res.status(200).json(geoTag.geoTagArray[parseInt(req.params.id)]);
+    } else {
+        res.status(404);
+    }
+});
+
+app.put('/geotags/:id', function (req, res) {
+    if (typeof geoTag.geoTagArray[parseInt(req.params.id)] !== undefined) {
+        let currentTag = geoTag.geoTagArray[parseInt(req.params.id)];
+        currentTag.latitude = req.params.latitude;
+        currentTag.longitude = req.params.longitude;
+        currentTag.name = req.params.name;
+        currentTag.hashtag = req.params.hashtag;
+        res.status(200).json(currentTag);
+    } else {
+        res.status(404);
+    }
+});
+
+app.delete('/geotags/:id', function (req, res) {
+    geoTag.removeTagByID(parseInt(req.params.id));
+    res.status(200).send("Tag " + req.params.id + " deleted");
+});
+
 /**
  * Setze Port und speichere in Express.
  */
