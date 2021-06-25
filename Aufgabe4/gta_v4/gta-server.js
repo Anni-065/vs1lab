@@ -221,7 +221,7 @@ app.get('/geotags/:id', function (req, res) {
     if (typeof geoTag.geoTagArray[parseInt(req.params.id)]) {
         res.status(200).json(geoTag.geoTagArray[parseInt(req.params.id)]);
     } else {
-        res.status(404);
+        res.status(404).send("Tag doesn't exist");
     }
 });
 
@@ -234,7 +234,7 @@ app.put('/geotags/:id', function (req, res) {
         currentTag.hashtag = req.params.hashtag;
         res.status(200).json(currentTag);
     } else {
-        res.status(404);
+        res.status(404).send("Tag doesn't exist");
     }
 });
 
