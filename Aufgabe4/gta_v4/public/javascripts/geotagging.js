@@ -17,7 +17,7 @@ function GeoTag(latitude, longitude, name, hashtag) {
     this.hashtag = hashtag;
 }
 
-document.getElementById("tag-form").addEventListener("submit", function () {
+function tagSubmit() {
     event.preventDefault();
     let newTag = JSON.stringify(new GeoTag($("#tLatitude").val()
         , $("#tLongitude").val()
@@ -39,9 +39,9 @@ document.getElementById("tag-form").addEventListener("submit", function () {
     xhttp.open("POST", "/geotags");
     xhttp.setRequestHeader("Content-Type", "application/json");
     xhttp.send(newTag);
-});
+}
 
-document.getElementById("filter-form").addEventListener("submit", function () {
+function searchSubmit() {
     event.preventDefault();
     let lat = document.getElementById("dLatitude").value;
     let long = document.getElementById("dLongitude").value;
@@ -57,7 +57,7 @@ document.getElementById("filter-form").addEventListener("submit", function () {
 
     let xhttp = new XMLHttpRequest();
     xhttp.onreadystatechange = function () {
-        if (xhttp.readyState === 4) {
+        if (xhttp.readyState === XMLHttpRequest.DONE) {
             if (xhttp.status === 200) {
                 writeTagsToDiscovery(xhttp.response);
             } else {
@@ -71,7 +71,7 @@ document.getElementById("filter-form").addEventListener("submit", function () {
     xhttp.open("GET", "/geotags?" + urlSearchParams.toString());
     xhttp.setRequestHeader("Content-Type", "application/json");
     xhttp.send();
-});
+}
 
 function writeTagsToDiscovery(response) {
     let taglist = JSON.parse(response);

@@ -46,7 +46,7 @@
                 <input type="text" id="tHashtag" maxlength="11" name="tHashtag"
                        placeholder="# + max. 10 letters" pattern="#\w+"/>
 
-                <input id="tSubmit" type="submit" value="submit">
+                <input id="tSubmit" type="submit" value="submit" onclick="tagSubmit()">
             </fieldset>
         </form>
         <!-- ############### Aufgabe1a Form1 Ende -->
@@ -62,7 +62,7 @@
                 <legend>Filter by SearchTerm</legend>
 
                 <input id="dSearch" type="text" name="dSearch" placeholder="search term">
-                <input id="dSubmit" type="submit" value="apply">
+                <input id="dSubmit" type="submit" value="apply" onclick="searchSubmit()">
                 <input id="dLatitude" name="lat" value="<%= latitude %>" hidden>
                 <input id="dLongitude" name="lon" value="<%= longitude %>" hidden>
             </fieldset>
