@@ -10,14 +10,102 @@ console.log("The script is going to start...");
 
 // Es folgen einige Deklarationen, die aber noch nicht ausgeführt werden ...
 
+function GeoTag(latitude, longitude, name, hashtag) {
+    this.latitude = latitude;
+    this.longitude = longitude;
+    this.name = name;
+    this.hashtag = hashtag;
+}
+
+function tagSubmit() {
+    event.preventDefault();
+    let newTag = JSON.stringify(new GeoTag($("#tLatitude").val()
+        , $("#tLongitude").val()
+        , $("#tName").val()
+        , $("#tHashtag").val()));
+
+    let xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function () {
+        if (xhttp.readyState === XMLHttpRequest.DONE) {
+            if (xhttp.status === 201) {
+                writeTagsToDiscovery(xhttp.response);
+            } else {
+                console.log("Could not create new tag: " + xhttp.status);
+            }
+
+        }
+    };
+
+    xhttp.open("POST", "/geotags");
+    xhttp.setRequestHeader("Content-Type", "application/json");
+    xhttp.send(newTag);
+}
+
+function searchSubmit() {
+    event.preventDefault();
+    let lat = document.getElementById("dLatitude").value;
+    let long = document.getElementById("dLongitude").value;
+    let search = document.getElementById("dSearch").value;
+
+    const urlSearchParams = new URLSearchParams();
+    if (search !== "") {
+        urlSearchParams.set("search", search);
+    } else {
+        urlSearchParams.set("latitude", lat);
+        urlSearchParams.set("longitude", long);
+    }
+
+    let xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function () {
+        if (xhttp.readyState === XMLHttpRequest.DONE) {
+            if (xhttp.status === 200) {
+                writeTagsToDiscovery(xhttp.response);
+            } else {
+                console.log("Could not find tags: " + xhttp.status);
+            }
+
+        }
+    };
+
+
+    xhttp.open("GET", "/geotags?" + urlSearchParams.toString());
+    xhttp.setRequestHeader("Content-Type", "application/json");
+    xhttp.send();
+}
+
+function writeTagsToDiscovery(response) {
+    let taglist = JSON.parse(response);
+
+    let ul = document.getElementById("results");
+    ul.innerHTML = "";
+    taglist.forEach(tag => {
+        let li = document.createElement("li");
+        li.appendChild(document.createTextNode(tag.name
+            + " ("
+            + tag.latitude
+            + ", "
+            + tag.longitude
+            + ") "
+            + tag.hashtag));
+        ul.appendChild(li);
+    });
+
+    if (taglist.length > 0) {
+        document.getElementById("dLatitude").value = taglist[0].latitude;
+        document.getElementById("dLongitude").value = taglist[0].longitude;
+    }
+
+    gtaLocator.updateLocation(taglist);
+}
+
 // Hier wird die verwendete API für Geolocations gewählt
 // Die folgende Deklaration ist ein 'Mockup', das immer funktioniert und eine fixe Position liefert.
 GEOLOCATIONAPI = {
     getCurrentPosition: function(onsuccess) {
         onsuccess({
             "coords": {
-                "latitude": 49.013790,
-                "longitude": 8.390071,
+                "latitude": 53.83808850792929,
+                "longitude": -9.351957062533689,
                 "altitude": null,
                 "accuracy": 39,
                 "altitudeAccuracy": null,
@@ -82,7 +170,7 @@ var gtaLocator = (function GtaLocator(geoLocationApi) {
     };
 
     // Hier API Key eintragen
-    var apiKey = "rALyAfGEG1DvUrGD6UiEneg66cFJFArR";
+    var apiKey = "YOUR_API_KEY_HERE";
 
     /**
      * Funktion erzeugt eine URL, die auf die Karte verweist.
@@ -112,35 +200,51 @@ var gtaLocator = (function GtaLocator(geoLocationApi) {
         console.log("Generated Maps Url: " + urlString);
         return urlString;
     };
+
     return { // Start öffentlicher Teil des Moduls ...
 
         // Public Member
 
         readme: "Dieses Objekt enthält 'öffentliche' Teile des Moduls.",
 
-        updateLocation: function() {
-            tryLocate(
-                function (position) {
-                    const lat = getLatitude(position);
-                    const lon = getLongitude(position);
+        updateLocation: function(taglist) {
+            if (!taglist) {
+                taglist = $("#result-img").data("tags");
+            }
 
-                    document.getElementById("tLatitude").value
-                        = document.getElementById("dLatitude").value
-                        = lat;
+            if ($("#dLatitude").val() !== ""
+                && $("#dLongitude").val() !== "") {
+                $("#result-img").attr('src', getLocationMapSrc(
+                    $("#dLatitude").val(),
+                    $("#dLongitude").val(),
+                    taglist,
+                    "13"));
+            } else {
+                tryLocate(
+                    function (position) {
+                        const latitude = getLatitude(position);
+                        const longitude = getLongitude(position);
 
-                    document.getElementById("tLongitude").value
-                        = document.getElementById("dLongitude").value
-                        = lon;
 
-                    document.getElementById("result-img").src = getLocationMapSrc(lat, lon, [], "13");
+                        console.log("LAT: " + latitude);
+                        console.log("LONG: " + longitude);
+                        document.getElementById("tLatitude").setAttribute('value', latitude);
+                        document.getElementById("tLongitude").setAttribute('value', longitude);
+                        document.getElementById("dLatitude").setAttribute('value', latitude);
+                        document.getElementById("dLongitude").setAttribute('value', longitude);
 
-                },
-                function (msg) {
-                    alert(msg);
-                }
-            )
+                        document.getElementById("result-img").src = getLocationMapSrc(latitude,
+                            longitude,
+                            taglist,
+                            "13");
+
+                    },
+                    function (msg) {
+                        alert(msg);
+                    }
+                )
+            }
         }
-
     }; // ... Ende öffentlicher Teil
 })(GEOLOCATIONAPI);
 
