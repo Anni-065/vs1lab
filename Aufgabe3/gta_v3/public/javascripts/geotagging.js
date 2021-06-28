@@ -120,7 +120,6 @@ var gtaLocator = (function GtaLocator(geoLocationApi) {
         readme: "Dieses Objekt enthält 'öffentliche' Teile des Moduls.",
 
         updateLocation: function() {
-
             if ($("#dLatitude").val() !== ""
                 && $("#dLongitude").val() !== "") {
                 $("#result-img").attr('src', getLocationMapSrc(
@@ -128,6 +127,7 @@ var gtaLocator = (function GtaLocator(geoLocationApi) {
                     $("#dLongitude").val(),
                     $("#result-img").data("tags"),
                     "13"));
+                console.log($("#result-img").data("tags"));
             } else {
                 tryLocate(
                     function (position) {

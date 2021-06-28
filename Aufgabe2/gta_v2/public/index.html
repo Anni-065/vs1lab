@@ -61,10 +61,13 @@
             <fieldset>
                 <legend>Filter by SearchTerm</legend>
 
+                <!-- hidden inputs -->
+                <input type="hidden" id="dLongtitude" name="dLongtitude">
+                <input type="hidden" id="dLatitude" name="dLatitude">
+
                 <input type="text" id="dSearch" name="dSearch" placeholder="search term">
                 <input type="submit" value="apply">
-                <input type="hidden" name="lat" id="dLatitude">
-                <input type="hidden" name="lon" id="dLongitude">
+
             </fieldset>
         </form>
         <!-- ############### Aufgabe1a Form2 Ende -->
@@ -90,12 +93,11 @@
     <span>2017 by LKIT</span>
 </footer>
 
-</body>
-
 <!-- Load JavaScripts
     ================================================== -->
 <!-- Placed at the end of the document so the pages load faster -->
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
 <script src="./javascripts/geotagging.js"></script>
-
+  
+</body>
 </html>

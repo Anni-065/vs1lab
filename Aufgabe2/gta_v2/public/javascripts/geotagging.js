@@ -82,7 +82,7 @@ var gtaLocator = (function GtaLocator(geoLocationApi) {
     };
 
     // Hier API Key eintragen
-    var apiKey = "YOUR_API_KEY_HERE";
+    var apiKey = "rALyAfGEG1DvUrGD6UiEneg66cFJFArR";
 
     /**
      * Funktion erzeugt eine URL, die auf die Karte verweist.
@@ -112,7 +112,6 @@ var gtaLocator = (function GtaLocator(geoLocationApi) {
         console.log("Generated Maps Url: " + urlString);
         return urlString;
     };
-
     return { // Start öffentlicher Teil des Moduls ...
 
         // Public Member
