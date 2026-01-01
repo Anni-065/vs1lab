@@ -2,9 +2,9 @@
     "name": "sessionTester",
     "version": "0.0.1",
     "dependencies": {
-        "body-parser": "^1.18.3",
+        "body-parser": "^1.20.4",
         "cookie-parser": "^1.4.3",
-        "express": "^4.16.4",
+        "express": "^4.22.1",
         "express-session": "^1.15.6",
         "passport": "^0.4.0",
         "passport-twitter": "^1.0.4"
